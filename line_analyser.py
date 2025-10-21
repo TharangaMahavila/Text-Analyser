@@ -1,7 +1,9 @@
 import importlib
 import re
 import word_analyser
+import util
 
+importlib.reload(util)
 importlib.reload(word_analyser)
 
 class LineAnalyser:

@@ -30,10 +30,10 @@ class CharacterAnalyser:
         total_letters = sum(self.stats["letter_count"].values())
         total_characters = self.get_total_characters()
         stats = {}
-        stats["Letters"] = f"{total_letters:>6} ({(total_letters/total_characters)*100:.1f})%"
-        stats["Digits"] = f"{self.stats["digit_count"]:>6} ({(self.stats["digit_count"]/total_characters)*100:.1f})%"
-        stats["Spaces"] = f"{self.stats["space_count"]:>6} ({(self.stats["space_count"]/total_characters)*100:.1f})%"
-        stats["Punctuation"] = f"{self.stats["punctuation_count"]:>6} ({(self.stats["punctuation_count"]/total_characters)*100:.1f})%"
+        stats["Letters"] = f"{total_letters:>6} ({(total_letters/total_characters)*100:.1f}%)"
+        stats["Digits"] = f"{self.stats["digit_count"]:>6} ({(self.stats["digit_count"]/total_characters)*100:.1f}%)"
+        stats["Spaces"] = f"{self.stats["space_count"]:>6} ({(self.stats["space_count"]/total_characters)*100:.1f}%)"
+        stats["Punctuation"] = f"{self.stats["punctuation_count"]:>6} ({(self.stats["punctuation_count"]/total_characters)*100:.1f}%)"
         return stats
 
     def get_most_common_letters(self, length):
