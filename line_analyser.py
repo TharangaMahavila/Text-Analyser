@@ -1,16 +1,16 @@
 import importlib
 import re
 import word_analyser
-import util
 
 importlib.reload(word_analyser)
-importlib.reload(util)
 
 class LineAnalyser:
     def __init__(self):
         self.wordAnalyser = word_analyser.WordAnalyser()
         self.inside_paragraph = False
         self.paragraph = ""
+        self.shortestSentence = ""
+        self.longestSentence = ""
         self.stats = {
             "total_lines":0,
             "paragraph_count":0,
@@ -29,29 +29,61 @@ class LineAnalyser:
             sentences = [sentence for sentence in sentences if sentence]
             for sentence in sentences:
                 if sentence:
-                    length = len(util.get_word_array(sentence))
-                    if length in self.stats["sentence_length"]:
-                        self.stats["sentence_length"][length] += 1
+                    word_length = len(util.get_word_array(sentence))
+                    if self.shortestSentence:
+                        if len(util.get_word_array(sentence)) < len(util.get_word_array(self.shortestSentence)):
+                            self.shortestSentence = sentence
                     else:
-                        self.stats["sentence_length"][length] = 1
+                        self.shortestSentence = sentence
+
+                    if self.longestSentence:
+                        if len(util.get_word_array(sentence)) > len(util.get_word_array(self.longestSentence)):
+                            self.longestSentence = sentence
+                    else:
+                        self.longestSentence = sentence
+
+                    if word_length in self.stats["sentence_length"]:
+                        self.stats["sentence_length"][word_length] += 1
+                    else:
+                        self.stats["sentence_length"][word_length] = 1
             self.inside_paragraph = False
             self.paragraph = ""
             
         self.wordAnalyser.analyse_word(line)
 
-    def print_basic_stats(self):
+    def get_basic_stats(self):
         wordAnalyser = self.wordAnalyser
         characterAnalyser = wordAnalyser.characterAnalyser
         wordCount = sum(wordAnalyser.stats["word_counts"].values())
         sentenceCount = sum(self.stats["sentence_length"].values())
-        print("Lines:", self.stats["total_lines"])
-        print("Paragraphs:", self.stats["paragraph_count"])
-        print("Sentences:", sentenceCount)
-        print("Words:", wordCount)
-        print("Unique words:", len(wordAnalyser.stats["word_counts"]))
-        print("Characters (with spaces):", (characterAnalyser.stats["character_count"] + characterAnalyser.stats["space_count"]))
-        print("Characters (without spaces):", characterAnalyser.stats["character_count"])
-        print("Average words per line:", f"{(wordCount/self.stats["total_lines"]):.1f}")
-        print("Average word length:", f"{wordAnalyser.calculate_average_word_length():.1f} characters")
-        print("Average words per sentence:", f"{(wordCount/sentenceCount):.1f}")
-        
+
+        basic_stat = {}
+        basic_stat["Lines"] = self.stats["total_lines"]
+        basic_stat["Paragraphs"] = self.stats["paragraph_count"]
+        basic_stat["Sentences"] = sentenceCount
+        basic_stat["Words"] = wordCount
+        basic_stat["Unique words"] = len(wordAnalyser.stats["word_counts"])
+        basic_stat["Characters (with spaces)"] = characterAnalyser.get_total_characters()
+        basic_stat["Characters (without spaces)"] = characterAnalyser.get_total_characters(False)
+        basic_stat["Average words per line"] = f"{(wordCount/self.stats["total_lines"]):.1f}"
+        basic_stat["Average word length"] = f"{wordAnalyser.calculate_average_word_length():.1f} characters"
+        basic_stat["Average words per sentence"] = f"{(wordCount/sentenceCount):.1f}"
+        return basic_stat
+
+    def get_sentence_analysis_stats(self):
+        wordAnalyser = self.wordAnalyser
+        wordCount = sum(wordAnalyser.stats["word_counts"].values())
+        sentenceCount = sum(self.stats["sentence_length"].values())
+        stats = {}
+        stats["Total sentences"] = sentenceCount
+        stats["Average words per sentence"] = f"{(wordCount/sentenceCount):.1f}"
+        stats["Shortest sentence"] = f"{len(util.get_word_array(self.shortestSentence))} words"
+        stats["Longest sentence"] = f"{len(util.get_word_array(self.longestSentence))} words"
+        return stats
+
+    def get_sentence_length_distribution(self, length):
+        sorted_sentences = sorted(self.stats["sentence_length"].items(), key=lambda item: item[1], reverse=True)
+        distribution = {}
+        for word_length,count in sorted_sentences[:length]:
+            distribution[f"{word_length:>2} words"] = f"{count:>6} sentences"
+        return distribution

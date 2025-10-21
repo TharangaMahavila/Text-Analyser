@@ -1,7 +1,14 @@
 import file_loader
+import export_content
 import importlib
+import os
+import textwrap
+from datetime import datetime
+import util
 
+importlib.reload(util)
 importlib.reload(file_loader)
+importlib.reload(export_content)
 
 class MainMenu:
     def __init__(self):
@@ -38,6 +45,12 @@ class MainMenu:
                 self.display_basic_stat()
             case 3:
                 self.word_frequency_analysis()
+            case 4:
+                self.sentence_analysis()
+            case 5:
+                self.character_analysis()
+            case 6:
+                self.export_result()
             case 9:
                 self.exit()
         
@@ -45,7 +58,8 @@ class MainMenu:
         if not self.loader.selected_file:
             return print("First you need to select and analyse the document")
         print(f'--- Basic Statistics for "{self.loader.selected_file}" ---')
-        self.loader.lineAnalyser.print_basic_stats()
+        for key, value in self.loader.lineAnalyser.get_basic_stats().items():
+            print(f"{key}: {value}")
         print()
         print("Generating basic statistics visualisation...")
         print()
@@ -57,14 +71,69 @@ class MainMenu:
         print(f'--- Word Analysis for "{self.loader.selected_file}" ---')
         lineAnalyser = self.loader.lineAnalyser
         wordAnalyser = lineAnalyser.wordAnalyser
-        wordAnalyser.print_most_common_words(10)
+        print("Top 10 most common words:")
+        for i ,(key,value) in enumerate(wordAnalyser.get_most_common_words(10).items(), start=1):
+            print(f" {i:>2}. {key:<20} {value}")
         print()
-        wordAnalyser.print_word_length_stats()
+        print("Word length statistics:")
+        for key, value in wordAnalyser.get_word_length_stats().items():
+            print(f"  {key}: {value}")
         print(f"Words appearing only once: {wordAnalyser.get_word_count_for_frequency(1)}")
         print()
         print("Generating word analysis visualisation...")
         print()
         input("Press Enter to continue...")
+
+    def sentence_analysis(self):
+        if not self.loader.selected_file:
+            return print("First you need to select and analyse the document")
+        print(f'--- Sentence Analysis for "{self.loader.selected_file}" ---')
+        lineAnalyser = self.loader.lineAnalyser
+        for key, value in lineAnalyser.get_sentence_analysis_stats().items():
+            print(f"{key}: {value}")
+        print()
+        print(f"Shortest sentence text: {lineAnalyser.shortestSentence}")
+        print()
+        print(f"Longest sentence text: {util.wrap_text(lineAnalyser.longestSentence, 2)}")
+        print()
+        print("Sentence length distribution (top 5):")
+        for key, value in lineAnalyser.get_sentence_length_distribution(5).items():
+            print(f"  {key}: {value}")
+        print()
+        print("Generating sentence analysis visualisation...")
+        print()
+        input("Press Enter to continue...")
+
+    def character_analysis(self):
+        if not self.loader.selected_file:
+            return print("First you need to select and analyse the document")
+        print(f'--- Character Analysis for "{self.loader.selected_file}" ---')
+        lineAnalyser = self.loader.lineAnalyser
+        wordAnalyser = lineAnalyser.wordAnalyser
+        characterAnalyser = wordAnalyser.characterAnalyser
+        print("Character type distribution:")
+        for key, value in characterAnalyser.get_character_type_distribution().items():
+            print(f'  {key+":":<20} {value}')
+        print()
+        print("Most common letters (10):")
+        for i ,(key,value) in enumerate(characterAnalyser.get_most_common_letters(10).items(), start=1):
+            print(f' {i:>2}. "{key}" - {value}')
+        print()
+        print("Generating character analysis visualisation...")
+        print()
+        input("Press Enter to continue...")
+
+    def export_result(self):
+        if not self.loader.selected_file:
+            return print("First you need to select and analyse the document")
+        fileName = self.loader.selected_file.split(".")[0] + "_result.txt"
+        os.makedirs("results", exist_ok=True)
+        output_file = os.path.join("results", fileName)
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(export_content.get_export_content(self.loader))
+        print(f'Results exported to "results/{fileName}"')
+        print("Results saved in simple text format - easy to read and understand!")
+        
 
     def exit(self):
         print("Thank you for using Text Analyser!")

@@ -29,18 +29,20 @@ class WordAnalyser:
                 self.stats["word_counts"][word] = 1
         self.characterAnalyser.analyse_character(line)
 
-    def print_most_common_words(self, length):
-        print(f"Top {length} most common words:")
+    def get_most_common_words(self, length):
         total_words = sum(self.stats["word_counts"].values())
         sorted_words = sorted(self.stats["word_counts"].items(), key=lambda item: item[1], reverse=True)
+        words = {}
         for i ,(word,count) in enumerate(sorted_words[:length], start=1):
-            print(f" {i:>2}. {word:<20} {count:>6} times ( {(count/total_words)*100:.1f}%)")
+            words[word] = f"{count:>6} times ( {(count/total_words)*100:.1f}%)"
+        return words
 
-    def print_word_length_stats(self):
-        print("Word length statistics:")
-        print(f"  Shortest word: {self.stats["shortest_word"]} characters")
-        print(f"  Longest word: {self.stats["longest_word"]} characters")
-        print(f"  Average word length: {self.calculate_average_word_length():.1f} characters")
+    def get_word_length_stats(self):
+        stats = {}
+        stats["Shortest word"] = f"{self.stats["shortest_word"]} characters"
+        stats["Longest word"] = f"{self.stats["longest_word"]} characters"
+        stats["Average word length"] = f"{self.calculate_average_word_length():.1f} characters"
+        return stats
 
     def get_word_count_for_frequency(self, frequency):
         return sum(1 for value in self.stats["word_counts"].values() if value == frequency)
