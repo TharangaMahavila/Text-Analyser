@@ -1,8 +1,10 @@
 import importlib
 import re
 import word_analyser
+import util
 
 importlib.reload(word_analyser)
+importlib.reload(util)
 
 class LineAnalyser:
     def __init__(self):
@@ -12,7 +14,7 @@ class LineAnalyser:
         self.stats = {
             "total_lines":0,
             "paragraph_count":0,
-            "sentence_count":0,
+            "sentence_length":{},
         }
 
     def analyse_line(self, line):
@@ -25,28 +27,31 @@ class LineAnalyser:
         else:
             sentences = re.split(r"[.!?]", self.paragraph)
             sentences = [sentence for sentence in sentences if sentence]
-            self.stats["sentence_count"] += len(sentences)
+            for sentence in sentences:
+                if sentence:
+                    length = len(util.get_word_array(sentence))
+                    if length in self.stats["sentence_length"]:
+                        self.stats["sentence_length"][length] += 1
+                    else:
+                        self.stats["sentence_length"][length] = 1
             self.inside_paragraph = False
             self.paragraph = ""
             
         self.wordAnalyser.analyse_word(line)
 
-    def get_basic_stats(self, filename):
+    def print_basic_stats(self):
         wordAnalyser = self.wordAnalyser
         characterAnalyser = wordAnalyser.characterAnalyser
-        print(f'--- Basic Statistics for "{filename}" ---')
+        wordCount = sum(wordAnalyser.stats["word_counts"].values())
+        sentenceCount = sum(self.stats["sentence_length"].values())
         print("Lines:", self.stats["total_lines"])
         print("Paragraphs:", self.stats["paragraph_count"])
-        print("Sentences:", self.stats["sentence_count"])
-        print("Words:", wordAnalyser.stats["word_count"])
-        print("Unique words:", len(wordAnalyser.stats["unique_words"]))
+        print("Sentences:", sentenceCount)
+        print("Words:", wordCount)
+        print("Unique words:", len(wordAnalyser.stats["word_counts"]))
         print("Characters (with spaces):", (characterAnalyser.stats["character_count"] + characterAnalyser.stats["space_count"]))
         print("Characters (without spaces):", characterAnalyser.stats["character_count"])
-        print("Average words per line:", f"{(wordAnalyser.stats["word_count"]/self.stats["total_lines"]):.1f}")
-        print("Average word length:", f"{(characterAnalyser.stats["character_count"]/wordAnalyser.stats["word_count"]):.1f} characters")
-        print("Average words per sentence:", f"{(wordAnalyser.stats["word_count"]/self.stats["sentence_count"]):.1f}")
-        print()
-        print("Generating basic statistics visualisation...")
-        print()
-        input("Press Enter to continue...")
+        print("Average words per line:", f"{(wordCount/self.stats["total_lines"]):.1f}")
+        print("Average word length:", f"{wordAnalyser.calculate_average_word_length():.1f} characters")
+        print("Average words per sentence:", f"{(wordCount/sentenceCount):.1f}")
         

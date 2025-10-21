@@ -36,13 +36,35 @@ class MainMenu:
                 self.loader.list_files()
             case 2:
                 self.display_basic_stat()
+            case 3:
+                self.word_frequency_analysis()
             case 9:
                 self.exit()
         
     def display_basic_stat(self):
         if not self.loader.selected_file:
             return print("First you need to select and analyse the document")
-        self.loader.lineAnalyser.get_basic_stats(self.loader.selected_file)
+        print(f'--- Basic Statistics for "{self.loader.selected_file}" ---')
+        self.loader.lineAnalyser.print_basic_stats()
+        print()
+        print("Generating basic statistics visualisation...")
+        print()
+        input("Press Enter to continue...")
+
+    def word_frequency_analysis(self):
+        if not self.loader.selected_file:
+            return print("First you need to select and analyse the document")
+        print(f'--- Word Analysis for "{self.loader.selected_file}" ---')
+        lineAnalyser = self.loader.lineAnalyser
+        wordAnalyser = lineAnalyser.wordAnalyser
+        wordAnalyser.print_most_common_words(10)
+        print()
+        wordAnalyser.print_word_length_stats()
+        print(f"Words appearing only once: {wordAnalyser.get_word_count_for_frequency(1)}")
+        print()
+        print("Generating word analysis visualisation...")
+        print()
+        input("Press Enter to continue...")
 
     def exit(self):
         print("Thank you for using Text Analyser!")
