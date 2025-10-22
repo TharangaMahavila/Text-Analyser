@@ -85,7 +85,4 @@ class LineAnalyser:
 
     def get_sentence_length_distribution(self, length):
         sorted_sentences = sorted(self.stats["sentence_length"].items(), key=lambda item: item[1], reverse=True)
-        distribution = {}
-        for word_length,count in sorted_sentences[:length]:
-            distribution[f"{word_length:>2} words"] = f"{count:>6} sentences"
-        return distribution
+        return sorted_sentences[:length]

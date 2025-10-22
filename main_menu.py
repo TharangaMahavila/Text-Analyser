@@ -5,10 +5,12 @@ import os
 import textwrap
 from datetime import datetime
 import util
+import data_visualisation
 
 importlib.reload(util)
 importlib.reload(file_loader)
 importlib.reload(export_content)
+importlib.reload(data_visualisation)
 
 class MainMenu:
     def __init__(self):
@@ -64,6 +66,7 @@ class MainMenu:
         print("Generating basic statistics visualisation...")
         print()
         input("Press Enter to continue...")
+        data_visualisation.generate_text_composition(self.loader.lineAnalyser.get_basic_stats())
 
     def word_frequency_analysis(self):
         if not self.loader.selected_file:
@@ -72,8 +75,9 @@ class MainMenu:
         lineAnalyser = self.loader.lineAnalyser
         wordAnalyser = lineAnalyser.wordAnalyser
         print("Top 10 most common words:")
-        for i ,(key,value) in enumerate(wordAnalyser.get_most_common_words(10).items(), start=1):
-            print(f" {i:>2}. {key:<20} {value}")
+        most_common = wordAnalyser.get_most_common_words(10)
+        for i ,(key,value) in enumerate(most_common.items(), start=1):
+            print(f" {i:>2}. {key:<20} {value["count"]:>6} times ({value["percentage"]:>3}%)")
         print()
         print("Word length statistics:")
         for key, value in wordAnalyser.get_word_length_stats().items():
@@ -83,6 +87,8 @@ class MainMenu:
         print("Generating word analysis visualisation...")
         print()
         input("Press Enter to continue...")
+        data_visualisation.generate_word_length_distribution(wordAnalyser.stats["word_counts"])
+        data_visualisation.generate_most_common_words(most_common)
 
     def sentence_analysis(self):
         if not self.loader.selected_file:
@@ -97,12 +103,15 @@ class MainMenu:
         print(f"Longest sentence text: {util.wrap_text(lineAnalyser.longestSentence, 2)}")
         print()
         print("Sentence length distribution (top 5):")
-        for key, value in lineAnalyser.get_sentence_length_distribution(5).items():
-            print(f"  {key}: {value}")
+        most_common = lineAnalyser.get_sentence_length_distribution(5)
+        for key, value in most_common:
+            print(f"  {key:>2} words: {value:>6} sentences")
         print()
         print("Generating sentence analysis visualisation...")
         print()
         input("Press Enter to continue...")
+        data_visualisation.generate_sentence_length_distribution(lineAnalyser.stats["sentence_length"])
+        data_visualisation.generate_most_common_sentence_lengths(most_common)
 
     def character_analysis(self):
         if not self.loader.selected_file:
@@ -113,15 +122,18 @@ class MainMenu:
         characterAnalyser = wordAnalyser.characterAnalyser
         print("Character type distribution:")
         for key, value in characterAnalyser.get_character_type_distribution().items():
-            print(f'  {key+":":<20} {value}')
+            print(f'  {key+":":<20} {value["count"]:>6} ({value["percentage"]:>3}%)')
         print()
         print("Most common letters (10):")
-        for i ,(key,value) in enumerate(characterAnalyser.get_most_common_letters(10).items(), start=1):
-            print(f' {i:>2}. "{key}" - {value}')
+        most_common = characterAnalyser.get_most_common_letters(10).items()
+        for i ,(key,value) in enumerate(most_common, start=1):
+            print(f' {i:>2}. "{key}" - {value["count"]:>6} times ({value["percentage"]}%)')
         print()
         print("Generating character analysis visualisation...")
         print()
         input("Press Enter to continue...")
+        data_visualisation.generate_character_type_distribution(characterAnalyser.get_character_type_distribution())
+        data_visualisation.generate_most_common_letters(most_common)
 
     def export_result(self):
         if not self.loader.selected_file:

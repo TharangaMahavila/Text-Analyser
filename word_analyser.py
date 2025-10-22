@@ -33,8 +33,11 @@ class WordAnalyser:
         total_words = sum(self.stats["word_counts"].values())
         sorted_words = sorted(self.stats["word_counts"].items(), key=lambda item: item[1], reverse=True)
         words = {}
-        for i ,(word,count) in enumerate(sorted_words[:length], start=1):
-            words[word] = f"{count:>6} times ( {(count/total_words)*100:.1f}%)"
+        for word,count in sorted_words[:length]:
+            words[word] = {
+                "count":count,
+                "percentage": round((count/total_words)*100, 1)
+            }
         return words
 
     def get_word_length_stats(self):
