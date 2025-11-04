@@ -1,8 +1,8 @@
+import sys
 import file_loader
 import export_content
 import importlib
 import os
-import textwrap
 from datetime import datetime
 import util
 import data_visualisation
@@ -149,3 +149,5 @@ class MainMenu:
 
     def exit(self):
         print("Thank you for using Text Analyser!")
+        sys.exit(0)
+            

@@ -1,3 +1,7 @@
+import util
+
+util.check_dependency()
+
 import main_menu
 import importlib
 
