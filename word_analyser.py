@@ -1,21 +1,24 @@
 import importlib
 import re
 import character_analyser
+import spell_checker
 import util
 
 importlib.reload(character_analyser)
+importlib.reload(spell_checker)
 importlib.reload(util)
 
 class WordAnalyser:
     def __init__(self):
         self.characterAnalyser = character_analyser.CharacterAnalyser()
+        self.spellingChecker = spell_checker.SpellingChecker()
         self.stats = {
             "word_counts":{},
             "shortest_word":1000,
             "longest_word":0
         }
 
-    def analyse_word(self, line):
+    def analyse_word(self, line_number, line):
         words = util.get_word_array(line)
         for word in words:
             word = re.sub(r'[,.!?;:()"\'"]', '', word)
@@ -28,6 +31,7 @@ class WordAnalyser:
             else:
                 self.stats["word_counts"][word] = 1
         self.characterAnalyser.analyse_character(line)
+        self.spellingChecker.check_spelling(line_number, words)
 
     def get_most_common_words(self, length):
         total_words = sum(self.stats["word_counts"].values())

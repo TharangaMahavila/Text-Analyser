@@ -24,8 +24,7 @@ class MainMenu:
                         5:"Character analysis",
                         6:"Export results",
                         7:"Spelling checker",
-                        8:"Grammer checker",
-                        9:"Exit"
+                        8:"Exit"
                        }
         print()
         print("="*50)
@@ -53,7 +52,9 @@ class MainMenu:
                 self.character_analysis()
             case 6:
                 self.export_result()
-            case 9:
+            case 7:
+                self.spelling_mistakes()
+            case 8:
                 self.exit()
         
     def display_basic_stat(self):
@@ -145,7 +146,30 @@ class MainMenu:
             f.write(export_content.get_export_content(self.loader))
         print(f'Results exported to "results/{fileName}"')
         print("Results saved in simple text format - easy to read and understand!")
-        
+
+    def spelling_mistakes(self):
+        if not self.loader.selected_file:
+            return print("First you need to select and analyse the document")
+        print(f'--- Spelling Mistakes for "{self.loader.selected_file}" ---')
+        lineAnalyser = self.loader.lineAnalyser
+        wordAnalyser = lineAnalyser.wordAnalyser
+        spellingChecker = wordAnalyser.spellingChecker
+        print()
+        print(f"Found {len(spellingChecker.get_mispelled_stats())} spelling mistakes during the analysis")
+        print()
+        if len(spellingChecker.get_mispelled_stats()) > 0: 
+            print("Generating the detailed report...")
+            print()
+            input("Press Enter to continue...")
+            content = ""
+            for key, value in spellingChecker.get_mispelled_stats().items():
+                content += f"Line {key} - {value}\n"
+            fileName = "spelling_mistakes_" + self.loader.selected_file.split(".")[0] + ".txt"
+            os.makedirs("results", exist_ok=True)
+            output_file = os.path.join("results", fileName)
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(content)
+            print(f'Results exported to "results/{fileName}"')
 
     def exit(self):
         print("Thank you for using Text Analyser!")

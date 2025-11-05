@@ -19,7 +19,7 @@ class LineAnalyser:
             "sentence_length":{},
         }
 
-    def analyse_line(self, line):
+    def analyse_line(self, line_number, line):
         self.stats["total_lines"] += 1
         if line.strip():
             if not self.inside_paragraph:
@@ -51,7 +51,7 @@ class LineAnalyser:
             self.inside_paragraph = False
             self.paragraph = ""
             
-        self.wordAnalyser.analyse_word(line)
+        self.wordAnalyser.analyse_word(line_number, line)
 
     def get_basic_stats(self):
         wordAnalyser = self.wordAnalyser

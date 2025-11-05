@@ -64,8 +64,8 @@ class FileLoader:
             print(f'Analysing "{filename}"...')
             file_path = Path(util.get_config("document_path")) / filename
             with open(file_path, 'r') as f:
-                for line in f:
-                    self.lineAnalyser.analyse_line(line)
+                for line_number, line in enumerate(f, start=1):
+                    self.lineAnalyser.analyse_line(line_number, line)
             print(f"Analysis complete! Processed {self.lineAnalyser.stats["total_lines"]} lines.")
             print(f'Successfully loaded and analysed "{filename}"')
         except Exception as e:

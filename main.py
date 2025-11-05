@@ -1,9 +1,11 @@
+import importlib
 import util
+
+importlib.reload(util)
 
 util.check_dependency()
 
 import main_menu
-import importlib
 
 importlib.reload(main_menu)
 
@@ -18,14 +20,14 @@ while True:
         break
     mainMenu.display_menu()
     try:  
-        choice = int(input("Enter your choice (1-9):"))
+        choice = int(input("Enter your choice (1-8):"))
         print()
-        if 1 <= choice <= 9:
+        if 1 <= choice <= 8:
             mainMenu.select_menu(choice)
-            if choice == 9:
+            if choice == 8:
                 break
         else:
             raise ValueError()
     except ValueError:
         attempts += 1
-        print("Something wrong! You need to give a number between 1-9\n")
+        print("Something wrong! You need to give a number between 1-8\n")
