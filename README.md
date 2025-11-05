@@ -18,7 +18,7 @@ A simple and interactive **Python console application** that analyses text files
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 Text-Analyser/
@@ -39,7 +39,7 @@ Text-Analyser/
 
 ---
 
-## ⚙️ Configuration (`config.json`)
+## Configuration (`config.json`)
 
 Example configuration:
 ```json
