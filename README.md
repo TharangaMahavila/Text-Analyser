@@ -1,6 +1,6 @@
 # Text Analyser – Console Program
 
-A simple and interactive **Python console application** that analyses text files along the various kind of parameters and generate the visualizations for them. It supports for identifying **spelling mistakes** and supports for multiple file types (like `.txt` and `.docx`) and automatically handles dependency installation when needed.
+A simple and interactive **Python console application** that analyses text files along the various kind of parameters and generate the visualizations for them. It supports for identifying **spelling mistakes** and supports for multiple file types (like `.txt` and `.py`) and automatically handles dependency installation when needed.
 
 ---
 
@@ -45,10 +45,10 @@ Example configuration:
 ```json
 {
     "document_path": ".",
-    "file_types": ["txt", "docx"]
+    "file_types": ["txt"]
 }
 ```
-You can modify file_types to include more extensions such as csv or log
+You can modify file_types to include more extensions such as .py (binary files are not allowed)
 
 ---
 
