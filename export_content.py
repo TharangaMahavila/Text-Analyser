@@ -67,7 +67,7 @@ TOP 10 MOST COMMON LETTERS
 
 ============================================================
 End of Analysis Report
-programmed by: Tharanga & Lashadi
+programmed by: Tharanga Mahavila
 ============================================================
 """
     return content

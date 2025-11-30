@@ -80,6 +80,3 @@ Add a GUI version for the better experience
 Tharanga Mahavila<br>
 https://github.com/TharangaMahavila<br>
 tharangamahavila@gmail.com
-
-Lashadi Sisiwari<br>
-lashadisisiwari@gmail.com
